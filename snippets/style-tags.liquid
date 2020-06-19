@@ -1,0 +1,10 @@
+
+{%- if layout == 'theme' -%}
+<link type="text/css" href="{{ 'layout.theme.css' | asset_url }}" rel="stylesheet">
+{%- else -%}
+<link rel="prefetch" href="{{ 'layout.theme.css' | asset_url }}" as="style">
+{%- endif -%} {%- if layout == 'theme' -%}
+<link type="text/css" href="{{ 'layout.theme.styleLiquid.scss.css' | asset_url }}" rel="stylesheet">
+{%- else -%}
+<link rel="prefetch" href="{{ 'layout.theme.styleLiquid.scss.css' | asset_url }}" as="style">
+{%- endif -%}

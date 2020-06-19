@@ -1,0 +1,278 @@
+{%- comment -%}
+This is a required section for the Shopify Theme Store.
+It is available in the "Header" section in the theme editor.
+
+Theme Store required settings
+- Show announcement
+- Text: message to announce
+- Link: link of the announcement bar
+
+Theme Store optional settings
+- Home page only: only shows on the home page
+{%- endcomment -%}
+
+<section data-section-id="{{ section.id }}" data-section-type="header">
+  <header>
+
+    {%- if section.settings.announcement_bar_enabled -%}
+    <div>
+      {%- if section.settings.announcement_bar_home_page_only == false or template.name == 'index' -%}
+      {%- if section.settings.announcement_bar_link != blank -%}
+      <a href="{{ section.settings.announcement_bar_link }}">
+        {{ section.settings.announcement_bar_text | escape }}
+      </a>
+      {%- else -%}
+      <p>{{ section.settings.announcement_bar_text | escape }}</p>
+      {%- endif -%}
+      {%- endif -%}
+    </div>
+    {%- endif -%}
+
+    <nav class="navbar navbar-expand-lg navbar-light" role="navigation">
+
+      <div class="container">
+        <div role="banner" class="navbar-brand mr-auto pr-3">
+          {% if template.name == 'index' %}
+            <h1>
+            {% else %}
+              <div class="h1">
+              {% endif %}
+              <a href="/" class="logo-image text-reset text-decoration-none">
+                {% if section.settings.logo != blank %}
+                  {% capture image_size %}{{ section.settings.logo_max_width }}x{% endcapture %}
+                  <img src="{{ section.settings.logo | img_url: image_size }}"
+                       srcset="{{ section.settings.logo | img_url: image_size }} 1x, {{ section.settings.logo | img_url: image_size, scale: 2 }} 2x"
+                       alt="{{ section.settings.logo.alt | default: shop.name }}">
+                {% else %}
+                  {{ shop.name }}
+                {% endif %}
+              </a>
+              {% if template.name == 'index' %}
+              </h1>
+            {% else %}
+                </div>
+              {% endif %}
+        </div>
+
+        <div class="nav-item order-0 order-lg-3">
+          <div class="d-flex flex-row align-items-center">
+            <a href="/cart">
+              <div class="position-relative btn mr-md-3">
+                {% include 'icon-basket' %}
+                <div class="text-light position-absolute cart-counter-badge">
+                  {{ cart.item_count }}
+                </div>
+              </div>
+              {% comment %}
+              {{ 'layout.cart.title' | t }}
+              {% endcomment %}
+            </a>
+          </div>
+        </div>
+
+
+
+        <button class="navbar-toggler mr-2 mr-sm-0" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse flex-grow-1 w-100" id="navbarSupportedContent">
+          <ul class="nav navbar-nav">
+            {% for link in linklists[section.settings.menu].links %}
+              {% if link.links != blank %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="{{ link.url }}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ link.title }}
+                    {% include 'icon-arrow-down' %}
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% for childlink in link.links %}
+                      <a class="dropdown-item" href="{{ childlink.url }}">
+                        {{ childlink.title }}
+                      </a>
+                    {% endfor %}
+                  </div>
+                </li>
+              {% else %}
+                <li class="ml-1 ml-md-0 nav-item {% if link.active %} active {% endif %}">
+                  <a class="nav-link" href="{{ link.url }}">
+                    {{ link.title }}
+                  </a>
+                </li>
+                    <div class="d-lg-none border-top"></div>
+              {% endif %}
+            {% endfor %}
+          </ul>
+
+
+
+          {% comment %}
+          <form class="form-inline my-2 my-lg-0" action="/search" method="get" role="search">
+            <label for="Search-{{ section.id }}" class="label-hidden">
+              {{ 'general.search.placeholder' | t }}
+            </label>
+
+            <input type="search"
+            class="form-control mr-sm-2"
+            name="q"
+            id="Search-{{ section.id }}"
+            value="{{ search.terms | escape }}"
+            aria-label="Search"
+            placeholder="{{ 'general.search.placeholder' | t }}">
+
+            <button type="submit" class="btn btn-outline-success my-2 my-sm-0">
+              {% include 'icon-search' %}
+              <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+            </button>
+          </form>
+          {% endcomment %}
+
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          {% if shop.customer_accounts_enabled %}
+            <div class="nav-item">
+              <a href="/account">
+
+                <button type="button" class="ml-1 ml-md-0 d-lg-none btn-lg btn-primary my-2">
+                  <span class="text-light">{% include 'icon-user' %}</span>
+                    My Account
+                </button>
+
+                <div class="d-none d-lg-block">
+                  <div class="row">
+
+                    <div class="btn mr-3">
+                      <span>{% include 'icon-user' %}</span>
+                    </div>
+
+                  </div>
+                </div>
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+
+      <!-- container --!>
+      </div>
+
+    </nav>
+
+  </header>
+
+</section>
+
+{% if section.settings.logo != blank %}
+  <style>
+    .logo-image {
+      display: block;
+      max-width: {{ section.settings.logo_max_width }}px;
+    }
+    @media only screen and (max-width: 375px) {
+      .logo-image img {
+        width: 170px;
+      }
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+{
+"name": "Header",
+"settings": [
+{
+"type": "header",
+"content": "Announcement bar"
+},
+{
+"type": "checkbox",
+"id": "announcement_bar_enabled",
+"label": "Show announcement",
+"default": false
+},
+{
+"type": "checkbox",
+"id": "announcement_bar_home_page_only",
+"label": "Show on home page only",
+"default": true
+},
+{
+"type": "text",
+"id": "announcement_bar_text",
+"label": "Announcement text",
+"default": "Announce something here"
+},
+{
+"type": "url",
+"id": "announcement_bar_link",
+"label": "Announcement link",
+"info": "Optional"
+},
+{
+"type": "header",
+"content": "Header"
+},
+{
+"type": "image_picker",
+"id": "logo",
+"label": "Logo image"
+},
+{
+"type": "range",
+"id": "logo_max_width",
+"min": 50,
+"max": 450,
+"step": 10,
+"unit": "px",
+"label": "Custom logo width",
+"default": 250
+},
+{
+"type": "link_list",
+"id": "menu",
+"label": "Menu",
+"default": "main-menu"
+}
+]
+}
+{% endschema %}
+
+<script type="application/ld+json">
+  {
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "{{ shop.name }}",
+  {% if section.settings.logo %}
+ {% assign image_size = section.settings.logo.width | append:'x' %}
+    "logo": "https:{{ section.settings.logo | img_url: image_size }}",
+  {% endif %}
+  "sameAs": [
+    "{{ settings.social_twitter_link }}",
+    "{{ settings.social_facebook_link }}",
+    "{{ settings.social_pinterest_link }}",
+    "{{ settings.social_instagram_link }}",
+    "{{ settings.social_tumblr_link }}",
+    "{{ settings.social_snapchat_link }}",
+    "{{ settings.social_youtube_link }}",
+    "{{ settings.social_vimeo_link }}"
+  ],
+  "url": "{{ shop.url }}{{ page.url }}"
+}
+</script>
+
+{% if template.name == 'index' %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": "{{ shop.name }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ shop.url }}/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "url": "{{ shop.url }}{{ page.url }}"
+    }
+  </script>
+{% endif %}
